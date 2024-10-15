@@ -1,43 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
-import { Todo } from "./hooks/useTodos";
-import axios from "axios";
-
-interface AddTodoContext {
-  previousTodos: Todo[];
-}
+import useAddTodo from "./hooks/useAddTodo";
 
 const TodoForm = () => {
-  const queryClient = useQueryClient();
-  const addTodo = useMutation<Todo, Error, Todo, AddTodoContext>({
-    mutationFn: (todo: Todo) =>
-      axios
-        .post<Todo>("https://jsonplaceholder.typicode.com/todos", todo)
-        .then((res) => res.data),
-    // OnMutate called before mutation function executes
-    onMutate: (newTodo: Todo) => {
-      const previousTodos = queryClient.getQueryData<Todo[]>(["todos"]) || [];
-      // Approach 2: Update data in the cache
-      queryClient.setQueryData<Todo[]>(["todos"], (todos) => [
-        newTodo,
-        ...(todos || []),
-      ]);
-      if (ref.current) {
-        ref.current.value = "";
-      }
-      return { previousTodos };
-    },
-    onSuccess: (savedTodo, newTodo) => {
-      queryClient.setQueryData<Todo[]>(["todos"], (todos) =>
-        todos?.map((todo) => (todo === newTodo ? savedTodo : todo))
-      );
-    },
-    onError: (error, newTodo, context) => {
-      if (!context) return;
-      queryClient.setQueryData<Todo[]>(["todos"], context.previousTodos);
-    },
-  });
   const ref = useRef<HTMLInputElement>(null);
+  const addTodo = useAddTodo(() => {
+    if (ref.current) ref.current.value = "";
+  });
 
   return (
     <>
