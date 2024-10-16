@@ -1,5 +1,5 @@
 interface Action {
-  type: 'INCREMENT' | 'RESET';
+  type: "INCREMENT" | "RESET";
 }
 
 const counterReducer = (state: number, action: Action): number => {
