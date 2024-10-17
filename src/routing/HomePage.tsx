@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 const HomePage = () => {
-  throw Error("Something went wrong");
+  // throw Error("Something went wrong");
   return (
     <>
       <p>
